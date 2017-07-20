@@ -1,7 +1,9 @@
 package com.example.webbj.imageeditor;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,10 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static android.R.attr.data;
+import static android.R.attr.slideEdge;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
     Button button;
+    Button Filters;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
 
@@ -36,9 +44,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.i(TAG, "here");
+
+        final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+        //checks if we have permission to write to external storage
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG, "poo");
+
+            //asks whether to display the reason for the request
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                //shows reason
+
+            }
+            else{
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+
         imageView = (ImageView)findViewById(R.id.imageView);
         button = (Button)findViewById(R.id.button);
+        Filters = (Button)findViewById(R.id.filterButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +80,70 @@ public class MainActivity extends AppCompatActivity {
                 openGallery();
             }
         });
+
+//        Filters.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(this, Filter.class);
+//            }
+//        });
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted and carry out the request
+                    Log.i(TAG, "poo");
+                } else {
+
+                    // permission denied
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+    public void onClick(View v){
+        //passes the image to the filter intent
+        Intent i = new Intent(this, Filter.class);
+        if (imageView == null){
+            Log.i(TAG, "nothing");
+        }
+
+
+        String test = "test";
+        //convert imageview to bitmap
+        imageView.setDrawingCacheEnabled(true);
+
+        // Without it the view will have a dimension of 0,0 and the bitmap will be null
+        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        // hardcoded so i always know how big image is
+        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+        if (imageView == null){
+            Log.i(TAG, "nothing");
+        }
+        imageView.buildDrawingCache(true);
+        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+        imageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+        Uri imageUri = getImageUri(this, selectedImage);
+        Log.i(TAG, imageUri.toString());
+//        byte[] byte);
+
+        //pass the uri as a string
+        i.putExtra("selected image", imageUri.toString());
+        startActivity(i);
+
     }
 
     public byte[] bitmaptoByteArray(Bitmap image){
@@ -65,41 +163,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, requestCode, data);
         imageUri = data.getData();
-        Log.i(TAG, "here");
         if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             imageUri = data.getData();
+            imageView.setImageURI(imageUri);
             try{
                 imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
             }
             catch (Exception e){
-                Log.i(TAG,"butt");
             }
-
-
         }
-
 }
-
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
-    }
-
-    public static Bitmap rotateImage(Bitmap source, float angle) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
-                matrix, true);
-    }
 
     public static Bitmap handleSamplingAndRotationBitmap(Context context, Uri selectedImage)
             throws IOException {
@@ -135,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         img = rotateImageIfRequired(context, img, selectedImage);
         return img;
     }
+
 
     private static int calculateInSampleSize(BitmapFactory.Options options,
                                              int reqWidth, int reqHeight) {
@@ -198,6 +272,7 @@ public class MainActivity extends AppCompatActivity {
         int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
         switch (orientation) {
+
             case ExifInterface.ORIENTATION_ROTATE_90:
                 return rotateImage(img, 90);
             case ExifInterface.ORIENTATION_ROTATE_180:
@@ -205,6 +280,7 @@ public class MainActivity extends AppCompatActivity {
             case ExifInterface.ORIENTATION_ROTATE_270:
                 return rotateImage(img, 270);
             default:
+
                 return img;
         }
     }
@@ -215,6 +291,25 @@ public class MainActivity extends AppCompatActivity {
         Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
         img.recycle();
         return rotatedImg;
+    }
+
+    public Uri getImageUri(Context Context, Bitmap image) {
+
+        /**
+         *
+         * Args:
+         *     Context: the context of the activity
+         *     image: a bitmap
+         *
+         * Returns:
+         *     The URI of the bitmap
+         */
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        Log.i(TAG, "penis");
+        String path = MediaStore.Images.Media.insertImage(Context.getContentResolver(), image, "Title", null);
+        Log.i(TAG, path);
+        return Uri.parse(path);
     }
 
 
