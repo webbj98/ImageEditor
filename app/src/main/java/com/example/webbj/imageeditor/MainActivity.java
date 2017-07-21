@@ -75,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
         button = (Button)findViewById(R.id.button);
         Filters = (Button)findViewById(R.id.filterButton);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openGallery();
+//            }
+//        });
 
 //        Filters.setOnClickListener(new View.OnClickListener() {
 //            @Override
