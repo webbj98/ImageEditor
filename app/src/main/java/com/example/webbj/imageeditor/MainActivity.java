@@ -75,12 +75,12 @@ public class MainActivity extends AppCompatActivity {
         button = (Button)findViewById(R.id.button);
         Filters = (Button)findViewById(R.id.filterButton);
 
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openGallery();
-//            }
-//        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
 
 //        Filters.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        Filters.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Snackbar.make(view, "Applying filter, please wait...", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        Filters.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view){
+//                Snackbar.make(view, "Applying filter, please wait...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
     }
 
