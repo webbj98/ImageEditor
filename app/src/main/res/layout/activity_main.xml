@@ -13,6 +13,8 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-2dp"
+        android:fitsSystemWindows="false"
         android:maxHeight="300dp"
         android:maxWidth="300dp"
         android:minHeight="400dp"

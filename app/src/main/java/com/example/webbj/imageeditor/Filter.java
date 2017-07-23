@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -38,6 +39,8 @@ public class Filter extends AppCompatActivity {
         Log.i(TAG, "here11");
 
         final Bitmap bitmapImage = imageViewtoBitmap(mainImageView);
+        Log.i(TAG, Integer.toString(bitmapImage.getHeight()) );
+        Log.i(TAG, Integer.toString(bitmapImage.getWidth()));
         invertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,27 +60,35 @@ public class Filter extends AppCompatActivity {
          *      an inverted image
          */
 
-        Bitmap finalImage = Bitmap.createBitmap(image.getWidth(), image.getHeight(), image.getConfig());
+
+        Bitmap copyImage = Bitmap.createScaledBitmap(image, image.getWidth(), image.getHeight(), false);
 
         int A, R, G, B; //alpha, red, green, blue
-        int pixelColor;
-        int height = image.getHeight();
-        int width = image.getWidth();
+        int height = copyImage.getHeight();
+        int width =copyImage.getWidth();
+        int size = copyImage.getHeight() * copyImage.getWidth();
 
-        // builds the new copied image
-        for (int y = 0; y < height; y++){
-            for(int x = 0; x < width; x++){
-                pixelColor = image.getPixel(x,y);
-                A = Color.alpha(pixelColor);
-                //inverted forms of red, green, and blue
-                R = 255 - Color.red(pixelColor);
-                G = 255 - Color.green(pixelColor);
-                B = 255 - Color.blue(pixelColor);
-                finalImage.setPixel(x,y, Color.argb(A, R, G,B));
-            }
+        //build an array where length is number of pixels in the bitmap
+        int[] bitmapArray = new int[size];
+
+        //stores the argb values in the array to be manipulated by the color class
+        copyImage.getPixels(bitmapArray, 0, width, 0,0, width, height);
+
+        //invert each entry in the array
+        for (int i = 0; i< size; i++){
+
+            A = Color.alpha(bitmapArray[i]);
+            R = 255 -  Color.red(bitmapArray[i]);
+            G = 255 - Color.green(bitmapArray[i]);
+            B = 255 - Color.blue(bitmapArray[i]);
+            bitmapArray[i] = Color.argb(A, R, G,B);
 
         }
-        return finalImage;
+
+        //set the bitmap to the inverted array
+        copyImage.setPixels(bitmapArray, 0, width, 0, 0, width, height);
+
+        return copyImage;
     }
 
     public static Bitmap imageViewtoBitmap(ImageView imageView){
