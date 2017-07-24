@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/mainImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="374dp"
         android:layout_marginTop="7dp"
         android:maxHeight="300dp"
         android:maxWidth="300dp"
@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Invert"
+        android:onClick="goBackToMain"
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintRight_creator="1"
         app:layout_constraintRight_toRightOf="parent"
@@ -47,5 +48,17 @@
         app:layout_constraintRight_toRightOf="@+id/mainImageView"
         app:layout_constraintTop_toBottomOf="@+id/mainImageView"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+        android:layout_marginRight="8dp" />
+
+    <Button
+        android:id="@+id/originalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Original"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 </android.support.constraint.ConstraintLayout>

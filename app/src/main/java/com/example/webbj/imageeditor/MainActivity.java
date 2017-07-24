@@ -108,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void onClick(View v){
+    public void openFilterActivity(View v){
 
-        Log.i(TAG, "filter onClick working");
+//        Log.i(TAG, "filter onClick working");
         //passes the image to the filter intent
         Intent i = new Intent(this, Filter.class);
 //        if (imageView == null){
