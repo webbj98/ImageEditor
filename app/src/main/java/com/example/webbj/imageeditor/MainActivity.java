@@ -88,6 +88,14 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+//        Filters.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view){
+//              Snackbar.make(view, "Applying filter, please wait...", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
+
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -113,13 +121,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void onClick(View v){
+        Log.i(TAG, "filter onClick working");
         //passes the image to the filter intent
         Intent i = new Intent(this, Filter.class);
         if (imageView == null){
             Log.i(TAG, "nothing");
         }
-
-
         String test = "test";
         //convert imageview to bitmap
         imageView.setDrawingCacheEnabled(true);
@@ -306,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
          */
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        Log.i(TAG, "penis");
         String path = MediaStore.Images.Media.insertImage(Context.getContentResolver(), image, "Title", null);
         Log.i(TAG, path);
         return Uri.parse(path);
