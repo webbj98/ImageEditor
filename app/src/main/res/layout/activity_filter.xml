@@ -31,8 +31,21 @@
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintRight_creator="1"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="11dp"
         app:layout_constraintTop_toBottomOf="@+id/mainImageView"
         tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.141" />
+
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="11dp"
+        android:text="Apply"
+        app:layout_constraintRight_toRightOf="@+id/mainImageView"
+        app:layout_constraintTop_toBottomOf="@+id/mainImageView"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
 </android.support.constraint.ConstraintLayout>

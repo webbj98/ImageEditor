@@ -33,7 +33,7 @@ import static android.R.attr.slideEdge;
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
-    Button button;
+    Button getImage;
     Button Filters;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
@@ -71,32 +71,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         imageView = (ImageView)findViewById(R.id.imageView);
-        button = (Button)findViewById(R.id.button);
+        getImage = (Button)findViewById(R.id.getImage);
         Filters = (Button)findViewById(R.id.filterButton);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openGallery();
             }
         });
-
-//        Filters.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(this, Filter.class);
-//            }
-//        });
-
-//        Filters.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//              Snackbar.make(view, "Applying filter, please wait...", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -120,13 +106,16 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
+
     public void onClick(View v){
+
         Log.i(TAG, "filter onClick working");
         //passes the image to the filter intent
         Intent i = new Intent(this, Filter.class);
-        if (imageView == null){
-            Log.i(TAG, "nothing");
-        }
+//        if (imageView == null){
+//            Log.i(TAG, "nothing");
+//        }
         String test = "test";
         //convert imageview to bitmap
         imageView.setDrawingCacheEnabled(true);
@@ -139,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         if (imageView == null){
             Log.i(TAG, "nothing");
         }
+
         imageView.buildDrawingCache(true);
         Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
         imageView.setDrawingCacheEnabled(false); // clear drawing cache
