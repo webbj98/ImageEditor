@@ -63,7 +63,7 @@
         android:layout_marginRight="196dp"
         android:layout_marginTop="55dp"
         android:onClick="openCropActivity"
-        android:text="Crop"
+        android:text="Rotate and Crop"
         app:layout_constraintRight_toRightOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         tools:layout_constraintRight_creator="1"
