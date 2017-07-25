@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     Button getImage;
     Button Filters;
+    Button Crop;
+
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
 
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.imageView);
         getImage = (Button)findViewById(R.id.getImage);
         Filters = (Button)findViewById(R.id.filterButton);
+        Crop = (Button)findViewById(R.id.cropButton);
 
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,13 +113,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void openFilterActivity(View v){
 
-//        Log.i(TAG, "filter onClick working");
         //passes the image to the filter intent
         Intent i = new Intent(this, Filter.class);
-//        if (imageView == null){
-//            Log.i(TAG, "nothing");
-//        }
-        String test = "test";
+
         //convert imageview to bitmap
         imageView.setDrawingCacheEnabled(true);
 
@@ -142,6 +141,34 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
 
     }
+
+    public void openCropActivity(View v){
+
+        //creates intent to pass to crop activity
+        Intent i = new Intent(this, Crop.class);
+
+        //convert imageview to bitmap
+        imageView.setDrawingCacheEnabled(true);
+
+        // Without it the view will have a dimension of 0,0 and the bitmap will be null
+        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+        // hardcoded so i always know how big image is
+        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+
+        imageView.buildDrawingCache(true);
+        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+        imageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+        Uri imageUri = getImageUri(this, selectedImage);
+
+        //pass the uri as a string
+        i.putExtra("selected image", imageUri.toString());
+        startActivity(i);
+
+    }
+
 
     public byte[] bitmaptoByteArray(Bitmap image){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
