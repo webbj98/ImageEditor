@@ -7,9 +7,12 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.media.ExifInterface;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -133,8 +136,11 @@ public class MainActivity extends AppCompatActivity {
         imageView.setDrawingCacheEnabled(false); // clear drawing cache
 
         Uri imageUri = getImageUri(this, selectedImage);
+
+
         Log.i(TAG, imageUri.toString());
 //        byte[] byte);
+
 
         //pass the uri as a string
         i.putExtra("selected image", imageUri.toString());
@@ -333,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
         image.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(Context.getContentResolver(), image, "Title", null);
         Log.i(TAG, path);
+
         return Uri.parse(path);
     }
 

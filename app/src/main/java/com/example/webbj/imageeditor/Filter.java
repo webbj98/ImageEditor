@@ -1,9 +1,16 @@
 package com.example.webbj.imageeditor;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +18,8 @@ import android.view.View;
 import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import java.io.File;
 
 public class Filter extends AppCompatActivity {
 
@@ -36,7 +45,10 @@ public class Filter extends AppCompatActivity {
         Log.i(TAG, data.getString("selected image"));
         Uri imageUri = Uri.parse(getIntent().getStringExtra("selected image"));
         mainImageView.setImageURI(imageUri);
-        Log.i(TAG, "here11");
+
+        //delete the temporary image in the internal storage
+        deleteUri(this, imageUri);
+
 
         final Bitmap bitmapImage = imageViewtoBitmap(mainImageView);
         Log.i(TAG, Integer.toString(bitmapImage.getHeight()) );
@@ -46,10 +58,11 @@ public class Filter extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "inverting");
                 mainImageView.setImageBitmap(invertImage(bitmapImage));
-                //could be a problem
+                Bitmap invertedImage = imageViewtoBitmap(mainImageView);
+                saveImage(getContentResolver(), invertedImage );
+
             }
         });
-
     }
 
     public static Bitmap invertImage(Bitmap image){
@@ -119,4 +132,55 @@ public class Filter extends AppCompatActivity {
 
     }
 
+    public static void saveImage(ContentResolver contentResolver, Bitmap image){
+        /**
+         * Args:
+         *     contentResolver: a contentResolver
+         *     image: an image in bitmap
+         *
+         * Saves the image to the photos folder
+         */
+        MediaStore.Images.Media.insertImage(contentResolver, image, "title", "description");
+    }
+
+    public static File uriToFile(Uri uri){
+        /**
+         * Args:
+         *     uri: an image's uri
+         * Returns:
+         *      The file path of that image
+         */
+
+        return new File(uri.getPath());
+
+
+    }
+
+    public static void deleteUri(Context context, Uri uri){
+        /**
+         * Args:
+         *      The uri of the file
+         *
+         * Deletes the uri and the file associated with the uri. Most useful for deleting pictures
+         * in the internal storage
+         */
+
+        long mediaId = ContentUris.parseId(uri);
+        Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri itemUri = ContentUris.withAppendedId(contentUri, mediaId);
+
+        /* int rows =*/ context.getContentResolver().delete(itemUri, null, null);
+
+
+//        String path = itemUri.getEncodedPath();
+//        if(rows == 0)
+//        {
+//            Log.i(TAG,"Could not delete "+path+" :(");
+//        }
+//        else {
+//            Log.i(TAG, "Deleted " + path + " ^_^");
+//        }
+    }
+
 }
+
