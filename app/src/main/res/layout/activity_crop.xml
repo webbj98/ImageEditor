@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.webbj.imageeditor.Crop">
+    tools:context="com.example.webbj.imageeditor.Crop"
+    android:background="@color/colorPrimaryDark">
+
 
     <ImageView
-        android:id="@+id/mainImageView"
+        android:id="@+id/picture"
         android:layout_width="300dp"
         android:layout_height="400dp"
         android:layout_marginTop="7dp"
@@ -18,36 +20,23 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorPrimary"
+        app:srcCompat="@android:color/black"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
     <Button
-        android:id="@+id/rotateButton"
+        android:id="@+id/crop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
         android:onClick="openRotateActivity"
         android:text="Rotate"
+        app:layout_constraintRight_toRightOf="@+id/picture"
+        app:layout_constraintTop_toBottomOf="@+id/picture"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="@+id/mainImageView"
-        android:layout_marginBottom="57dp" />
+        tools:layout_constraintTop_creator="1" />
 
-    <Button
-        android:id="@+id/cropButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="openCropActivity"
-        android:text="Crop"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        android:layout_marginStart="9dp"
-        app:layout_constraintBottom_toBottomOf="@+id/rotateButton"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="@+id/mainImageView"
-        app:layout_constraintTop_toTopOf="@+id/rotateButton" />
 
 </android.support.constraint.ConstraintLayout>

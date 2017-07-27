@@ -113,6 +113,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public byte[] bitmaptoByteArray(Bitmap image){
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
 
     public void openFilterActivity(View v){
 
@@ -149,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openCropActivity(View v){
+        Log.i(TAG, "openCropActivity");
 
         //creates intent to pass to crop activity
         Intent i = new Intent(this, Crop.class);
@@ -170,19 +177,14 @@ public class MainActivity extends AppCompatActivity {
         Uri imageUri = getImageUri(this, selectedImage);
 
         //pass the uri as a string
-        i.putExtra("selected image", imageUri.toString());
+        i.putExtra("crop image", imageUri.toString());
         startActivity(i);
+        Log.i(TAG, "finished opening crop activity");
 
 
     }
 
 
-    public byte[] bitmaptoByteArray(Bitmap image){
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        return byteArray;
-    }
 
 
     private void openGallery(){
