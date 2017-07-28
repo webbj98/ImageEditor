@@ -4,21 +4,17 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 
 public class Crop extends AppCompatActivity implements OnClickListener{
 
@@ -32,6 +28,8 @@ public class Crop extends AppCompatActivity implements OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        imageView = (ImageView)findViewById(R.id.picture);
+
         Log.i(TAG, "oncreate");
         setContentView(R.layout.activity_crop);
         Log.i(TAG, "set content view");
@@ -46,6 +44,9 @@ public class Crop extends AppCompatActivity implements OnClickListener{
         //convert the string uri back to a uri object
         Log.i(TAG, data.getString("crop image"));
         picUri = Uri.parse(getIntent().getStringExtra("crop image"));
+        if (picUri == null){
+            return;
+        }
         Log.i(TAG, picUri.toString());
         //sets imageView to display uri
         imageView.setImageURI(picUri);
