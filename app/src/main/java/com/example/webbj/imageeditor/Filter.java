@@ -32,7 +32,7 @@ public class Filter extends AppCompatActivity {
         setContentView(R.layout.activity_filter);
 
         Log.i(TAG, "here11");
-        mainImageView = (ImageView)findViewById(R.id.mainImageView);
+        mainImageView = (ImageView)findViewById(R.id.picture);
         invertButton = (Button)findViewById(R.id.invertButton);
 
         Bundle data = getIntent().getExtras(); // get extra info from anothe r Intent

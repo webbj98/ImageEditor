@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
         //pass the uri as a string
         i.putExtra("selected image", imageUri.toString());
         startActivity(i);
-
     }
 
     public void openCropActivity(View v){
@@ -184,8 +183,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void openHueActivity(View v){
 
-
+    }
 
     private void openGallery(){
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);

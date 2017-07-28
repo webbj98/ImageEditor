@@ -22,7 +22,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Filter" />
-        <activity android:name=".Crop"></activity>
+        <activity android:name=".Crop" />
+        <activity android:name=".HueEditor"></activity>
     </application>
 
 </manifest>

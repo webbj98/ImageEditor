@@ -16,11 +16,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-public class Crop extends AppCompatActivity implements OnClickListener{
+public class Crop extends AppCompatActivity{
 
     ImageView imageView;
     //captured picture uri
-    private Uri picUri;
+    Uri picUri;
     //keep track of cropping intent
     final int PIC_CROP = 2;
     String TAG = "DebugMessage";
@@ -33,11 +33,13 @@ public class Crop extends AppCompatActivity implements OnClickListener{
         Log.i(TAG, "oncreate");
         setContentView(R.layout.activity_crop);
         Log.i(TAG, "set content view");
-        Bundle extras = getIntent().getExtras();
+        imageView = (ImageView)findViewById(R.id.picture);
+        //Bundle extras = getIntent().getExtras();
         Log.i(TAG, "here1");
         Bundle data = getIntent().getExtras(); // get extra info from another Intent
         if(data == null){
             //if nothing is passed
+
             return;
         }
         Log.i(TAG, "here2");
@@ -58,8 +60,8 @@ public class Crop extends AppCompatActivity implements OnClickListener{
         final Bitmap bitmapImage = imageViewtoBitmap(imageView);
 
     }
+  
 
-    @Override
     public void onClick(View v) {
         if (v.getId() == R.id.crop_button) {
             try {
