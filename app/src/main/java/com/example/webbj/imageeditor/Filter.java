@@ -3,19 +3,17 @@ package com.example.webbj.imageeditor;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.MediaScannerConnection;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -25,7 +23,14 @@ public class Filter extends AppCompatActivity {
 
     ImageView mainImageView;
     Button invertButton;
+    Button applyButton;
+    Button originalButton;
+    Button monoButton;
+
+    boolean isInverted = false; // if the image has already been inverted this ensures it cannot be inverted again
     private static final String TAG = "DebugMessage";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,9 +38,13 @@ public class Filter extends AppCompatActivity {
 
         Log.i(TAG, "here11");
         mainImageView = (ImageView)findViewById(R.id.picture);
+        mainImageView = (ImageView)findViewById(R.id.picture);
         invertButton = (Button)findViewById(R.id.invertButton);
+        applyButton = (Button)findViewById(R.id.applyButton);
+        originalButton = (Button)findViewById(R.id.originalButton);
+        monoButton = (Button)findViewById(R.id.monoButton);
 
-        Bundle data = getIntent().getExtras(); // get extra info from anothe r Intent
+        Bundle data = getIntent().getExtras(); // get extra info from another Intent
         if(data == null){
             //if nothing is passed
             return;
@@ -44,6 +53,8 @@ public class Filter extends AppCompatActivity {
         //convert the string uri back to a uri object
         Log.i(TAG, data.getString("selected image"));
         Uri imageUri = Uri.parse(getIntent().getStringExtra("selected image"));
+        Log.i(TAG, imageUri.toString());
+        //sets imageView to display uri
         mainImageView.setImageURI(imageUri);
 
         //delete the temporary image in the internal storage
@@ -53,6 +64,10 @@ public class Filter extends AppCompatActivity {
         final Bitmap bitmapImage = imageViewtoBitmap(mainImageView);
         Log.i(TAG, Integer.toString(bitmapImage.getHeight()) );
         Log.i(TAG, Integer.toString(bitmapImage.getWidth()));
+
+
+
+        //Invert Button Handler
         invertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,31 +76,62 @@ public class Filter extends AppCompatActivity {
                 Bitmap invertedImage = imageViewtoBitmap(mainImageView);
                 saveImage(getContentResolver(), invertedImage );
 
+                // Creates a new bitmap object to represent the inverted image
+                Log.i(TAG, "inverting bitmap");
+                invertedImage = invertImage(bitmapImage);
+                mainImageView.setImageBitmap(invertedImage);
+                Log.i(TAG, "inverted bitmap");
+
+                //Creates a snackbar to indicate inversion
+                Snackbar.make(v, "Inverted", Snackbar.LENGTH_SHORT)
+                        .show();
+
+            }
+        });
+
+        monoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "mono");
+                Bitmap bitmapCopy = bitmapImage.copy(bitmapImage.getConfig(), true);
+                Log.i(TAG, String.valueOf(bitmapCopy==bitmapImage));
+                mainImageView.setColorFilter(createContrast(bitmapCopy, 50));
+                Log.i(TAG, "mono done");
+                Log.i(TAG,"help me");
+
+            }
+        });
+
+        //Original Button Handler
+        originalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, String.valueOf(bitmapImage==imageViewtoBitmap(mainImageView)));
+                mainImageView.setImageBitmap(bitmapImage);
+                mainImageView.clearColorFilter();
             }
         });
     }
 
     public static Bitmap invertImage(Bitmap image){
-        /**
+        /*
          * Args:
          *     image: a bitmap image
          * Returns:
          *      an inverted image
          */
-
-
-        Bitmap copyImage = Bitmap.createScaledBitmap(image, image.getWidth(), image.getHeight(), false);
+        Bitmap bitmapCopy = image.copy(image.getConfig(), true);
 
         int A, R, G, B; //alpha, red, green, blue
-        int height = copyImage.getHeight();
-        int width =copyImage.getWidth();
-        int size = copyImage.getHeight() * copyImage.getWidth();
+        int height = bitmapCopy.getHeight();
+        int width = bitmapCopy.getWidth();
+        int size = bitmapCopy.getHeight() * image.getWidth();
 
         //build an array where length is number of pixels in the bitmap
         int[] bitmapArray = new int[size];
 
         //stores the argb values in the array to be manipulated by the color class
-        copyImage.getPixels(bitmapArray, 0, width, 0,0, width, height);
+        bitmapCopy.getPixels(bitmapArray, 0, width, 0,0, width, height);
 
         //invert each entry in the array
         for (int i = 0; i< size; i++){
@@ -99,13 +145,22 @@ public class Filter extends AppCompatActivity {
         }
 
         //set the bitmap to the inverted array
-        copyImage.setPixels(bitmapArray, 0, width, 0, 0, width, height);
+        bitmapCopy.setPixels(bitmapArray, 0, width, 0, 0, width, height);
 
-        return copyImage;
+        return bitmapCopy;
+    }
+
+    public static ColorMatrixColorFilter createContrast(Bitmap src, double value) {
+
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        return filter;
     }
 
     public static Bitmap imageViewtoBitmap(ImageView imageView){
-        /**
+        /*
          * Args:
          *     imageview: an imageview
          * Returns:
@@ -120,9 +175,7 @@ public class Filter extends AppCompatActivity {
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
         // hardcoded so i always know how big image is
         imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-        if (imageView == null){
-            Log.i(TAG, "nothing");
-        }
+
         imageView.buildDrawingCache(true);
         Bitmap bitmapImage = Bitmap.createBitmap(imageView.getDrawingCache());
         imageView.setDrawingCacheEnabled(false); // clear drawing cache
