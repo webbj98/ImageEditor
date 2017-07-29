@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.webbj.imageeditor.RGBEditor"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp"
+    android:background="@color/colorPrimaryDark">
+
+
+
+    <EditText
+        android:id="@+id/textRedValue"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="-4dp"
+        android:layout_marginLeft="0dp"
+        android:ems="10"
+        android:inputType="none|textPersonName"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:text="0"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBarRed"
+        app:layout_constraintLeft_toRightOf="@+id/seekBarRed"
+        app:layout_constraintTop_toTopOf="@+id/textRed" />
+
+    <SeekBar
+        android:id="@+id/seekBarGreen"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="29dp"
+        android:max="255"
+        android:progressBackgroundTint="@color/colorButton"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBarBlue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-3dp"
+        android:layout_marginTop="16dp"
+        android:maxHeight="400dp"
+        android:maxWidth="300dp"
+        android:minHeight="250dp"
+        android:minWidth="300dp"
+        app:layout_constraintBottom_toTopOf="@+id/textRedValue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.169"
+        app:srcCompat="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/textRed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Red"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/textGreen"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.96"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/textGreen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:text="Green"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textBlue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="26dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarRed"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="56dp"
+        android:max="255"
+        android:progressBackgroundTint="@color/colorButton"
+        app:layout_constraintBottom_toBottomOf="@+id/seekBarBlue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <EditText
+        android:id="@+id/textGreenValue"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:text="0"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        app:layout_constraintLeft_toRightOf="@+id/seekBarGreen"
+        app:layout_constraintTop_toTopOf="@+id/textGreen"
+        tools:layout_editor_absoluteX="312dp"
+        tools:layout_editor_absoluteY="441dp" />
+
+    <TextView
+        android:id="@+id/textBlue"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="Blue"
+        android:textSize="18sp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="16dp" />
+
+    <SeekBar
+        android:id="@+id/seekBarBlue"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:max="255"
+        android:progressBackgroundTint="@color/colorButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <EditText
+        android:id="@+id/textBlueValue"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:text="0"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        app:layout_constraintLeft_toRightOf="@+id/seekBarBlue"
+        app:layout_constraintTop_toTopOf="@+id/textBlue" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline"
+        app:layout_constraintGuide_begin="20dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline2"
+        app:layout_constraintGuide_begin="20dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="20dp" />
+
+</android.support.constraint.ConstraintLayout>
