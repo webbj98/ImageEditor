@@ -251,8 +251,9 @@ public class MainActivity extends AppCompatActivity {
          * Returns:
          *      A bitmap image that has been rotated correctly
          */
-        int MAX_HEIGHT = 1024;
-        int MAX_WIDTH = 1024;
+        // determine the max dimensions of the picture
+        int MAX_HEIGHT = 896;
+        int MAX_WIDTH = 896;
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -350,6 +351,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private static Bitmap rotateImage(Bitmap img, int degree) {
+
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
@@ -375,6 +377,5 @@ public class MainActivity extends AppCompatActivity {
 
         return Uri.parse(path);
     }
-
 
 }
