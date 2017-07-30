@@ -33,13 +33,12 @@
         android:id="@+id/getImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorButton"
-        android:text="Choose_Image"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toTopOf="@+id/cropButton"
         android:layout_marginStart="20dp"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView" />
+        android:text="Choose_Image"
+        app:layout_constraintBottom_toTopOf="@+id/cropButton"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1" />
 
     <Button
         android:id="@+id/filterButton"
