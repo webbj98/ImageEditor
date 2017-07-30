@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     Button getImage;
     Button Filters;
     Button Crop;
+    Button RGB;
 
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         getImage = (Button)findViewById(R.id.getImage);
         Filters = (Button)findViewById(R.id.filterButton);
         Crop = (Button)findViewById(R.id.cropButton);
+        RGB = (Button)findViewById(R.id.rgbEditorButton);
 
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,7 +185,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void openHueActivity(View v){
+    public void openRGBActivity(View v){
+        //passes the image to the filter intent
+        Intent i = new Intent(this, RGBEditor.class);
+
+        //convert imageview to bitmap
+        imageView.setDrawingCacheEnabled(true);
+
+        // Without it the view will have a dimension of 0,0 and the bitmap will be null
+        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        // hardcoded so i always know how big image is
+        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+        if (imageView == null){
+            Log.i(TAG, "nothing");
+        }
+
+        imageView.buildDrawingCache(true);
+        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+        imageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+        Uri imageUri = getImageUri(this, selectedImage);
+
+
+        Log.i(TAG, imageUri.toString());
+//        byte[] byte);
+
+
+        //pass the uri as a string
+        i.putExtra("selected image", imageUri.toString());
+        startActivity(i);
 
     }
 

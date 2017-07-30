@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".Filter" />
         <activity android:name=".Crop" />
-        <activity android:name=".HueEditor"></activity>
+        <activity android:name=".RGBEditor"></activity>
     </application>
 
 </manifest>
