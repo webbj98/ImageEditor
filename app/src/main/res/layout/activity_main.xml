@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="47dp"
-        android:layout_marginRight="47dp"
+        android:layout_marginRight="-26dp"
         android:layout_marginTop="55dp"
         android:onClick="openCropActivity"
         android:text="Rotate and Crop"
@@ -77,6 +77,7 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/cropButton"
         app:layout_constraintRight_toRightOf="@+id/getImage"
         tools:layout_constraintBaseline_creator="1"
-        tools:layout_constraintRight_creator="1" />
+        tools:layout_constraintRight_creator="1"
+        android:layout_marginRight="47dp" />
 
 </android.support.constraint.ConstraintLayout>
