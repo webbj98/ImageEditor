@@ -39,9 +39,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     //Button getImage;
     ImageButton getImage;
-    Button Filters;
-    Button Crop;
-    Button RGB;
+
 
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
@@ -80,9 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = (ImageView)findViewById(R.id.imageView);
         getImage = (ImageButton)findViewById(R.id.galleryButton);
-       // Filters = (Button)findViewById(R.id.filterButton);
-        //Crop = (Button)findViewById(R.id.cropButton);
-        //RGB = (Button)findViewById(R.id.rgbEditorButton);
+
 
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override

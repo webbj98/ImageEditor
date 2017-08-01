@@ -33,9 +33,9 @@
         android:id="@+id/galleryButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        app:layout_constraintBottom_toTopOf="@+id/cameraButton"
-        app:layout_constraintLeft_toLeftOf="@+id/cameraButton"
-        app:layout_constraintRight_toRightOf="@+id/cameraButton"
+        app:layout_constraintBottom_toTopOf="@+id/cameraButton2"
+        app:layout_constraintLeft_toLeftOf="@+id/cameraButton2"
+        app:layout_constraintRight_toRightOf="@+id/cameraButton2"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:srcCompat="@android:drawable/ic_menu_gallery"
         tools:layout_constraintBottom_creator="1"
@@ -97,7 +97,7 @@
         tools:layout_constraintTop_creator="1" />
 
     <ImageButton
-        android:id="@+id/cameraButton"
+        android:id="@+id/cameraButton2"
         android:layout_width="60dp"
         android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
