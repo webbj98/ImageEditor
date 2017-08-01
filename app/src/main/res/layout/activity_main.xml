@@ -14,7 +14,7 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="6dp"
         android:fitsSystemWindows="false"
         android:maxHeight="300dp"
         android:maxWidth="300dp"
@@ -29,55 +29,101 @@
         tools:layout_constraintTop_creator="1"
         tools:maxWidth="300dp" />
 
-    <Button
-        android:id="@+id/getImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="Choose_Image"
-        app:layout_constraintBottom_toTopOf="@+id/cropButton"
-        app:layout_constraintLeft_toLeftOf="@+id/imageView"
+    <ImageButton
+        android:id="@+id/galleryButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@+id/cameraButton"
+        app:layout_constraintLeft_toLeftOf="@+id/cameraButton"
+        app:layout_constraintRight_toRightOf="@+id/cameraButton"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:srcCompat="@android:drawable/ic_menu_gallery"
         tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1" />
-
-    <Button
-        android:id="@+id/filterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="47dp"
-        android:layout_marginTop="7dp"
-        android:onClick="openFilterActivity"
-        android:text="Filters"
-        app:layout_constraintRight_toRightOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        android:layout_marginTop="0dp"
+        app:layout_constraintHorizontal_bias="1.0"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <Button
+    <ImageButton
         android:id="@+id/cropButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="47dp"
-        android:layout_marginRight="-26dp"
-        android:layout_marginTop="55dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="37dp"
+        android:layout_marginStart="23dp"
         android:onClick="openCropActivity"
-        android:text="Rotate and Crop"
-        app:layout_constraintRight_toRightOf="@+id/imageView"
+        app:layout_constraintBottom_toBottomOf="@+id/galleryButton"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView"
+        app:layout_constraintRight_toLeftOf="@+id/galleryButton"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_menu_crop"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
 
-    <Button
-        android:id="@+id/rgbEditorButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="14dp"
-        android:onClick="openRGBActivity"
-        android:text="RGB Editor"
-        app:layout_constraintBaseline_toBaselineOf="@+id/cropButton"
-        app:layout_constraintRight_toRightOf="@+id/getImage"
-        tools:layout_constraintBaseline_creator="1"
+    <ImageButton
+        android:id="@+id/filterButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="35dp"
+        android:layout_marginStart="40dp"
+        android:onClick="openFilterActivity"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/galleryButton"
+        app:layout_constraintRight_toRightOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:srcCompat="@mipmap/ic_launcher"
+        tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
-        android:layout_marginRight="47dp" />
+        tools:layout_constraintTop_creator="1" />
+
+    <ImageButton
+        android:id="@+id/rgbButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:onClick="openRGBActivity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/cropButton"
+        app:layout_constraintRight_toRightOf="@+id/cropButton"
+        app:layout_constraintTop_toBottomOf="@+id/cropButton"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <ImageButton
+        android:id="@+id/cameraButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/downloadImage"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@android:drawable/ic_menu_camera"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
+
+    <ImageButton
+        android:id="@+id/downloadImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:tint="@android:color/holo_orange_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/filterButton"
+        app:layout_constraintRight_toRightOf="@+id/filterButton"
+        app:layout_constraintTop_toBottomOf="@+id/filterButton"
+        app:srcCompat="@android:drawable/stat_sys_download"
+        tools:layout_constraintBottom_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1" />
 
 </android.support.constraint.ConstraintLayout>

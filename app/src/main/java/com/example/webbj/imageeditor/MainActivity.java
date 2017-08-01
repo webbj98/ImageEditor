@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.graphics.Matrix;
 import android.widget.ImageView;
@@ -36,7 +37,8 @@ import static android.R.attr.slideEdge;
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
-    Button getImage;
+    //Button getImage;
+    ImageButton getImage;
     Button Filters;
     Button Crop;
     Button RGB;
@@ -77,10 +79,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         imageView = (ImageView)findViewById(R.id.imageView);
-        getImage = (Button)findViewById(R.id.getImage);
-        Filters = (Button)findViewById(R.id.filterButton);
-        Crop = (Button)findViewById(R.id.cropButton);
-        RGB = (Button)findViewById(R.id.rgbEditorButton);
+        getImage = (ImageButton)findViewById(R.id.galleryButton);
+       // Filters = (Button)findViewById(R.id.filterButton);
+        //Crop = (Button)findViewById(R.id.cropButton);
+        //RGB = (Button)findViewById(R.id.rgbEditorButton);
 
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
