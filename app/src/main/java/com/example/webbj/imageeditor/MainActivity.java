@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     //Button getImage;
     ImageButton getImage;
+    ImageButton cameraButton;
 
 
     private static final int PICK_IMAGE = 100;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri imageUri;
 
     private static final String TAG = "DebugMessage";
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
         //checks if we have permission to write to external storage
@@ -78,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
         imageView = (ImageView)findViewById(R.id.imageView);
         getImage = (ImageButton)findViewById(R.id.galleryButton);
+        cameraButton = (ImageButton)findViewById(R.id.cameraButton);
+
+        //Disasble the button if user has not camera
+        if(!hasCamera())
+            cameraButton.setEnabled(false);
 
 
         getImage.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
-
+        Log.i(TAG, "pldddds");
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
@@ -225,13 +233,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, requestCode, data);
         imageUri = data.getData();
+
+        Log.i(TAG, "request code: " + Integer.toString(requestCode));
         if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             imageView.setImageURI(imageUri);
             try{
+                //makes sure that the picture is rotated properly
+                Log.i(TAG, "rotated");
                 imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
             }
             catch (Exception e){
             }
+        }
+        else if(resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE){
+            Bundle extras = data.getExtras();
+            Bitmap image = (Bitmap) extras.get("data");
+            Log.i(TAG, "capture");
+            imageUri = getImageUri(this, image);
+            //imageView.setImageURI(imageUri);
+            try{
+                //makes sure that the picture is rotated properly
+                Log.i(TAG, "rotated");
+                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+            }
+            catch (Exception e){
+            }
+            //imageView.setImageBitmap(image);
         }
 }
 
@@ -344,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
         int orientation = cursor.getInt(0);
         cursor.close();
         cursor = null;
+        Log.i(TAG, "orientation: " + Integer.toString(orientation));
         return orientation;
     }
 
@@ -355,50 +383,6 @@ public class MainActivity extends AppCompatActivity {
 //        img.recycle();
 //        return rotatedImg;
 //    }
-
-    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
-        Matrix matrix = new Matrix();
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_NORMAL:
-                return bitmap;
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                matrix.setScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                matrix.setRotate(180);
-                break;
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                matrix.setRotate(180);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_TRANSPOSE:
-                matrix.setRotate(90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                matrix.setRotate(90);
-                break;
-            case ExifInterface.ORIENTATION_TRANSVERSE:
-                matrix.setRotate(-90);
-                matrix.postScale(-1, 1);
-                break;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                matrix.setRotate(-90);
-                break;
-            default:
-                return bitmap;
-        }
-        try {
-            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-            bitmap.recycle();
-            return bmRotated;
-        }
-        catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public Uri getImageUri(Context Context, Bitmap image) {
 
@@ -417,6 +401,18 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, path);
 
         return Uri.parse(path);
+    }
+
+    private boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    public  void launchCamera(View view){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //Take a picture and pass results to onActivity Result
+        Log.i(TAG, "pls");
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
     }
 
 }
