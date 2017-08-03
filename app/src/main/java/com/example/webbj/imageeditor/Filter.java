@@ -56,8 +56,7 @@ public class Filter extends AppCompatActivity {
         mainImageView.setImageURI(imageUri);
 
         //delete the temporary image in the internal storage
-        deleteUri(this, imageUri);
-
+        MainActivity.deleteUri(this, imageUri);
 
         final Bitmap bitmapImage = imageViewtoBitmap(mainImageView);
         Log.i(TAG, Integer.toString(bitmapImage.getHeight()) );
@@ -111,6 +110,14 @@ public class Filter extends AppCompatActivity {
                 Log.i(TAG, String.valueOf(bitmapImage==imageViewtoBitmap(mainImageView)));
                 mainImageView.setImageBitmap(bitmapImage);
                 mainImageView.clearColorFilter();
+            }
+        });
+
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.saveImage(getContentResolver(), imageViewtoBitmap(mainImageView));
+
             }
         });
 
@@ -205,17 +212,6 @@ public class Filter extends AppCompatActivity {
     }
 
 
-    /**
-     * Args:
-     *     contentResolver: a contentResolver
-     *     image: an image in bitmap
-     *
-     * Saves the image to the photos folder
-     */
-    public static void saveImage(ContentResolver contentResolver, Bitmap image){
-
-        MediaStore.Images.Media.insertImage(contentResolver, image, "title", "description");
-    }
 
 
     /**
@@ -231,31 +227,7 @@ public class Filter extends AppCompatActivity {
 
     }
 
-    /**
-     * Args:
-     *      The uri of the file
-     *
-     * Deletes the uri and the file associated with the uri. Most useful for deleting pictures
-     * in the internal storage
-     */
-    public static void deleteUri(Context context, Uri uri){
 
-        long mediaId = ContentUris.parseId(uri);
-        Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        Uri itemUri = ContentUris.withAppendedId(contentUri, mediaId);
-
-        /* int rows =*/ context.getContentResolver().delete(itemUri, null, null);
-
-
-//        String path = itemUri.getEncodedPath();
-//        if(rows == 0)
-//        {
-//            Log.i(TAG,"Could not delete "+path+" :(");
-//        }
-//        else {
-//            Log.i(TAG, "Deleted " + path + " ^_^");
-//        }
-    }
 
 }
 

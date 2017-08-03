@@ -1,5 +1,7 @@
 package com.example.webbj.imageeditor;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.Manifest;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -229,6 +232,18 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    private boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    public void launchCamera(View view){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //Take a picture and pass results to onActivity Result
+        Log.i(TAG, "pls");
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, requestCode, data);
@@ -243,24 +258,34 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
             }
             catch (Exception e){
+                return ;
             }
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE){
+            Uri imgUri;
             Bundle extras = data.getExtras();
             Bitmap image = (Bitmap) extras.get("data");
             Log.i(TAG, "capture");
-            imageUri = getImageUri(this, image);
+
+            imgUri = getImageUri(this, image);
+            saveImage(getContentResolver(), image);
+
+            Log.i(TAG, "Uri 1=" + String.valueOf(imgUri));
+            Log.i(TAG, "Uri 1=" + String.valueOf(getImageUri(this, image)));
+
             //imageView.setImageURI(imageUri);
             try{
                 //makes sure that the picture is rotated properly
                 Log.i(TAG, "rotated");
-                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, getImageUri(this, image)));
             }
             catch (Exception e){
+                return ;
             }
             //imageView.setImageBitmap(image);
         }
 }
+
 
     public static Bitmap handleSamplingAndRotationBitmap(Context context, Uri selectedImage)
             throws IOException {
@@ -276,8 +301,8 @@ public class MainActivity extends AppCompatActivity {
          *      A bitmap image that has been rotated correctly
          */
         // determine the max dimensions of the picture
-        int MAX_HEIGHT = 896;
-        int MAX_WIDTH = 896;
+        int MAX_HEIGHT = 2048;
+        int MAX_WIDTH = 2048;
 
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -362,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
-        if (cursor.getCount() != 1) {
+        if (cursor.getCount() != 1 ) {
             cursor.close();
             return -1;
         }
@@ -384,6 +409,7 @@ public class MainActivity extends AppCompatActivity {
 //        return rotatedImg;
 //    }
 
+
     public Uri getImageUri(Context Context, Bitmap image) {
 
         /**
@@ -403,16 +429,45 @@ public class MainActivity extends AppCompatActivity {
         return Uri.parse(path);
     }
 
-    private boolean hasCamera(){
-        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+
+    /**
+     * Args:
+     *     contentResolver: a contentResolver
+     *     image: an image in bitmap
+     *
+     * Saves the image to the photos folder
+     */
+    public static void saveImage(ContentResolver contentResolver, Bitmap image){
+
+        MediaStore.Images.Media.insertImage(contentResolver, image, "title", "description");
     }
 
-    public  void launchCamera(View view){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //Take a picture and pass results to onActivity Result
-        Log.i(TAG, "pls");
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
+    /**
+     * Args:
+     *      The uri of the file
+     *
+     * Deletes the uri and the file associated with the uri. Most useful for deleting pictures
+     * in the internal storage
+     */
+    public static void deleteUri(Context context, Uri uri){
+
+        long mediaId = ContentUris.parseId(uri);
+        Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        Uri itemUri = ContentUris.withAppendedId(contentUri, mediaId);
+
+        /* int rows =*/ context.getContentResolver().delete(itemUri, null, null);
+
+
+//        String path = itemUri.getEncodedPath();
+//        if(rows == 0)
+//        {
+//            Log.i(TAG,"Could not delete "+path+" :(");
+//        }
+//        else {
+//            Log.i(TAG, "Deleted " + path + " ^_^");
+//        }
     }
+
 
 }
