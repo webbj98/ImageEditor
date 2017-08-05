@@ -1,13 +1,10 @@
 package com.example.webbj.imageeditor;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,16 +31,16 @@ public class Filter extends AppCompatActivity {
         setContentView(R.layout.activity_filter);
 
         Log.i(TAG, "here11");
-        mainImageView = (ImageView)findViewById(R.id.picture);
-        mainImageView = (ImageView)findViewById(R.id.picture);
-        invertButton = (Button)findViewById(R.id.invertButton);
-        applyButton = (Button)findViewById(R.id.applyButton);
-        originalButton = (Button)findViewById(R.id.originalButton);
-        greyButton = (Button)findViewById(R.id.monoButton);
-        applyButton = (Button)findViewById(R.id.applyButton);
+        mainImageView = (ImageView) findViewById(R.id.picture);
+        mainImageView = (ImageView) findViewById(R.id.picture);
+        invertButton = (Button) findViewById(R.id.invertButton);
+        applyButton = (Button) findViewById(R.id.applyButton);
+        originalButton = (Button) findViewById(R.id.originalButton);
+        greyButton = (Button) findViewById(R.id.monoButton);
+        applyButton = (Button) findViewById(R.id.applyButton);
 
         Bundle data = getIntent().getExtras(); // get extra info from another Intent
-        if(data == null){
+        if (data == null) {
             //if nothing is passed
             return;
         }
@@ -59,9 +56,8 @@ public class Filter extends AppCompatActivity {
         MainActivity.deleteUri(this, imageUri);
 
         final Bitmap bitmapImage = imageViewtoBitmap(mainImageView);
-        Log.i(TAG, Integer.toString(bitmapImage.getHeight()) );
+        Log.i(TAG, Integer.toString(bitmapImage.getHeight()));
         Log.i(TAG, Integer.toString(bitmapImage.getWidth()));
-
 
         //Invert Button Handler
         invertButton.setOnClickListener(new View.OnClickListener() {
@@ -82,10 +78,10 @@ public class Filter extends AppCompatActivity {
 ////                        .show();
                 Log.i(TAG, "invert");
                 Bitmap bitmapCopy = bitmapImage.copy(bitmapImage.getConfig(), true);
-                Log.i(TAG, String.valueOf(bitmapCopy==bitmapImage));
+                Log.i(TAG, String.valueOf(bitmapCopy == bitmapImage));
                 mainImageView.setColorFilter(getInvertFilter());
                 Log.i(TAG, "mono done");
-                Log.i(TAG,"help me");
+                Log.i(TAG, "help me");
 
             }
         });
@@ -95,10 +91,10 @@ public class Filter extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "mono");
                 Bitmap bitmapCopy = bitmapImage.copy(bitmapImage.getConfig(), true);
-                Log.i(TAG, String.valueOf(bitmapCopy==bitmapImage));
+                Log.i(TAG, String.valueOf(bitmapCopy == bitmapImage));
                 mainImageView.setColorFilter(getGreyscaleFilter());
                 Log.i(TAG, "mono done");
-                Log.i(TAG,"help me");
+                Log.i(TAG, "help me");
 
             }
         });
@@ -107,7 +103,7 @@ public class Filter extends AppCompatActivity {
         originalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, String.valueOf(bitmapImage==imageViewtoBitmap(mainImageView)));
+                Log.i(TAG, String.valueOf(bitmapImage == imageViewtoBitmap(mainImageView)));
                 mainImageView.setImageBitmap(bitmapImage);
                 mainImageView.clearColorFilter();
             }
@@ -185,7 +181,7 @@ public class Filter extends AppCompatActivity {
         return new ColorMatrixColorFilter(matrix);
     }
 
-    public static Bitmap imageViewtoBitmap(ImageView imageView){
+    public static Bitmap imageViewtoBitmap(ImageView imageView) {
         /*
          * Args:
          *     imageview: an imageview
@@ -212,22 +208,24 @@ public class Filter extends AppCompatActivity {
     }
 
 
-
-
     /**
      * Args:
-     *     uri: an image's uri
+     * uri: an image's uri
      * Returns:
-     *      The file path of that image
+     * The file path of that image
      */
-    public static File uriToFile(Uri uri){
+    public static File uriToFile(Uri uri) {
 
         return new File(uri.getPath());
 
 
     }
 
+    public void openMainActivity(View v) {
 
+        //passes the image to the filter intent
+        Intent i = new Intent(this, Filter.class);
 
+    }
 }
 
