@@ -12,8 +12,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+
 
 
 public class Crop extends AppCompatActivity{
@@ -24,25 +27,32 @@ public class Crop extends AppCompatActivity{
     //keep track of cropping intent
     final int PIC_CROP = 2;
     String TAG = "DebugMessage";
+    Button crop;
+    Intent CropIntent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        imageView = (ImageView)findViewById(R.id.picture);
 
-        Log.i(TAG, "oncreate");
-        setContentView(R.layout.activity_crop);
-        Log.i(TAG, "set content view");
-        imageView = (ImageView)findViewById(R.id.picture);
+
+
         //Bundle extras = getIntent().getExtras();
-        Log.i(TAG, "here1");
+
         Bundle data = getIntent().getExtras(); // get extra info from another Intent
         if(data == null){
             //if nothing is passed
-
             return;
         }
-        Log.i(TAG, "here2");
+        imageView = (ImageView)findViewById(R.id.picture);
+
+
+        setContentView(R.layout.activity_crop);
+
+        crop =(Button)findViewById(R.id.crop_button);
+
+        imageView = (ImageView)findViewById(R.id.picture);
         //convert the string uri back to a uri object
         Log.i(TAG, data.getString("crop image"));
         picUri = Uri.parse(getIntent().getStringExtra("crop image"));
@@ -52,77 +62,66 @@ public class Crop extends AppCompatActivity{
         Log.i(TAG, picUri.toString());
         //sets imageView to display uri
         imageView.setImageURI(picUri);
-        Log.i(TAG, "here4");
+
         //delete the temporary image in the internal storage
-        deleteUri(this, picUri);
-
-
-        final Bitmap bitmapImage = imageViewtoBitmap(imageView);
 
     }
-  
 
     public void onClick(View v) {
-        if (v.getId() == R.id.crop_button) {
-            try {
-                performCrop(picUri);
-            }
+        CropImage();
+    }
 
-            catch(ActivityNotFoundException anfe){
-                //display an error message
-                String errorMessage = "Whoops - your device doesn't support cropping!";
-                Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-                toast.show();
-            }
+    private void CropImage() {
+
+        try{
+
+            CropIntent = new Intent("com.android.camera.action.CROP");
+            CropIntent.setDataAndType(picUri,"image/*");
+
+            CropIntent.putExtra("crop","true");
+            CropIntent.putExtra("outputX",1000);
+            CropIntent.putExtra("outputY",1000);
+            CropIntent.putExtra("aspectX",1);
+            CropIntent.putExtra("aspectY",1);
+            CropIntent.putExtra("scaleUpIfNeeded",false);
+            CropIntent.putExtra("return-data",true);
+
+            startActivityForResult(CropIntent,1);
+        }
+        catch (ActivityNotFoundException ex)
+        {
 
         }
 
     }
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        //user is returning from cropping the image
-        if(requestCode == PIC_CROP){
-            //get the returned data
-            Bundle extras = data.getExtras();
-            //get the cropped bitmap
-            Bitmap thePic = extras.getParcelable("data");
-
-            //retrieve a reference to the ImageView
-            ImageView picView = (ImageView)findViewById(R.id.picture);
-            //display the returned cropped image
-            picView.setImageBitmap(thePic);
+        if(requestCode == 0 && resultCode == RESULT_OK)
+            CropImage();
+        else if(requestCode == 2)
+        {
+            if(data != null)
+            {
+                Log.i(TAG, "weh");
+                picUri = data.getData();
+                CropImage();
+            }
         }
-    }
+        //the above codes are used if gotten pics from camera
+        else if (requestCode == 1) {
 
-    private void performCrop(Uri pictureURI){
-        try {
-            //call the standard crop action intent (the user device may not support it)
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            //indicate image type and Uri
-            cropIntent.setDataAndType(pictureURI, "image/*");
-            //set crop properties
-            cropIntent.putExtra("crop", "true");
-            //indicate aspect of desired crop
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            //indicate output X and Y
-            cropIntent.putExtra("outputX", 256);
-            cropIntent.putExtra("outputY", 256);
-            //retrieve data on return
-            cropIntent.putExtra("return-data", true);
-            //start the activity - we handle returning in onActivityResult
-            startActivityForResult(cropIntent, PIC_CROP);
-
+            if (data != null) {
+                Log.i(TAG, "Blah");
+                Bundle bundle = data.getExtras();
+                Bitmap bitmap = bundle.getParcelable("data");
+                imageView.setImageBitmap(bitmap);
+                Filter.saveImage(this.getContentResolver(),bitmap );
+            }
         }
-        catch(ActivityNotFoundException anfe){
-            //display an error message
-            String errorMessage = "Whoops - your device doesn't support the crop action!";
-            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-            toast.show();
         }
 
-    }
+
 
     public static Bitmap imageViewtoBitmap(ImageView imageView){
         /*
@@ -166,3 +165,5 @@ public class Crop extends AppCompatActivity{
         /* int rows =*/ context.getContentResolver().delete(itemUri, null, null);
     }
 }
+
+

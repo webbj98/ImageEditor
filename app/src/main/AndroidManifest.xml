@@ -3,6 +3,7 @@
     package="com.example.webbj.imageeditor">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
@@ -23,7 +24,8 @@
         </activity>
         <activity android:name=".Filter" />
         <activity android:name=".Crop" />
-        <activity android:name=".RGBEditor"></activity>
+        <activity android:name=".RGBEditor"/>
+
     </application>
 
 </manifest>

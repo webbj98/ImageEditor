@@ -1,7 +1,5 @@
 package com.example.webbj.imageeditor;
 
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.Manifest;
 import android.content.Intent;
@@ -9,7 +7,12 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
+import android.media.ExifInterface;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,25 +20,34 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.graphics.Matrix;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static android.R.attr.data;
+import static android.R.attr.slideEdge;
+import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
+
     //Button getImage;
     ImageButton getImage;
     ImageButton cameraButton;
-
+    ImageButton filterButton;
 
     private static final int PICK_IMAGE = 100;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     Uri imageUri;
+    Uri hiRezImageUri;
 
     private static final String TAG = "DebugMessage";
 
@@ -73,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView)findViewById(R.id.imageView);
         getImage = (ImageButton)findViewById(R.id.galleryButton);
         cameraButton = (ImageButton)findViewById(R.id.cameraButton);
+        filterButton = (ImageButton)findViewById(R.id.filterButton);
 
         //Disasble the button if user has not camera
         if(!hasCamera())
@@ -85,8 +98,44 @@ public class MainActivity extends AppCompatActivity {
                 openGallery();
             }
         });
-    }
 
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                //passes the image to the filter intent
+                Intent i = new Intent(MainActivity.this, Filter.class);
+
+
+                //convert imageview to bitmap
+                imageView.setDrawingCacheEnabled(true);
+
+                // Without it the view will have a dimension of 0,0 and the bitmap will be null
+                imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                // hardcoded so i always know how big image is
+                imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+                if (imageView == null){
+                    Log.i(TAG, "nothing");
+                }
+
+                imageView.buildDrawingCache(true);
+                Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+                imageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+                Uri imageUri = getImageUri(MainActivity.this, selectedImage);
+
+                Log.i(TAG, imageUri.toString());
+        //        byte[] byte);
+
+
+                //pass the uri as a string
+                i.putExtra("selected image", imageUri.toString());
+                i.putExtra("hirez image", hiRezImageUri.toString());
+                startActivity(i);
+
+            }
+        });
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -119,38 +168,39 @@ public class MainActivity extends AppCompatActivity {
         return byteArray;
     }
 
-    public void openFilterActivity(View v){
-
-        //passes the image to the filter intent
-        Intent i = new Intent(this, Filter.class);
-
-        //convert imageview to bitmap
-        imageView.setDrawingCacheEnabled(true);
-
-        // Without it the view will have a dimension of 0,0 and the bitmap will be null
-        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        // hardcoded so i always know how big image is
-        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-        if (imageView == null){
-            Log.i(TAG, "nothing");
-        }
-
-        imageView.buildDrawingCache(true);
-        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
-        imageView.setDrawingCacheEnabled(false); // clear drawing cache
-
-        Uri imageUri = getImageUri(this, selectedImage);
-
-
-        Log.i(TAG, imageUri.toString());
-//        byte[] byte);
-
-
-        //pass the uri as a string
-        i.putExtra("selected image", imageUri.toString());
-        startActivity(i);
-    }
+//    public void openFilterActivity(View v){
+//
+//        //passes the image to the filter intent
+//        Intent i = new Intent(this, Filter.class);
+//
+//
+//        //convert imageview to bitmap
+//        imageView.setDrawingCacheEnabled(true);
+//
+//        // Without it the view will have a dimension of 0,0 and the bitmap will be null
+//        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+//                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//        // hardcoded so i always know how big image is
+//        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+//        if (imageView == null){
+//            Log.i(TAG, "nothing");
+//        }
+//
+//        imageView.buildDrawingCache(true);
+//        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+//        imageView.setDrawingCacheEnabled(false); // clear drawing cache
+//
+//        Uri imageUri = getImageUri(this, selectedImage);
+//
+//
+//        Log.i(TAG, imageUri.toString());
+////        byte[] byte);
+//
+//
+//        //pass the uri as a string
+//        i.putExtra("selected image", imageUri.toString());
+//        startActivity(i);
+//    }
 
     public void openCropActivity(View v){
         Log.i(TAG, "openCropActivity");
@@ -220,18 +270,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
-    private boolean hasCamera(){
-        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
-    }
-
-    public void launchCamera(View view){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //Take a picture and pass results to onActivity Result
-        Log.i(TAG, "pls");
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, requestCode, data);
@@ -243,37 +281,38 @@ public class MainActivity extends AppCompatActivity {
             try{
                 //makes sure that the picture is rotated properly
                 Log.i(TAG, "rotated");
-                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+                Bitmap hiRezBitmap = handleSamplingAndRotationBitmap(this, imageUri);
+
+                imageView.setImageBitmap(Bitmap.createScaledBitmap(hiRezBitmap, (int) (hiRezBitmap.getWidth()/2.0),
+                        (int)(hiRezBitmap.getHeight()/1.7), false));
+                //imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+                Bitmap scaledimage = Filter.imageViewtoBitmap(imageView);
+
+                //store the uri of the  higher rez, scaled down version of the bitmap
+                hiRezImageUri = getImageUri(this, hiRezBitmap);
+
+                //Filter.saveImage(this.getContentResolver(), hiRezBitmap);
             }
             catch (Exception e){
-                return ;
             }
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE){
-            Uri imgUri;
             Bundle extras = data.getExtras();
             Bitmap image = (Bitmap) extras.get("data");
             Log.i(TAG, "capture");
-
-            imgUri = getImageUri(this, image);
-            saveImage(getContentResolver(), image);
-
-            Log.i(TAG, "Uri 1=" + String.valueOf(imgUri));
-            Log.i(TAG, "Uri 1=" + String.valueOf(getImageUri(this, image)));
-
+            imageUri = getImageUri(this, image);
             //imageView.setImageURI(imageUri);
             try{
                 //makes sure that the picture is rotated properly
                 Log.i(TAG, "rotated");
-                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, getImageUri(this, image)));
+                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+
             }
             catch (Exception e){
-                return ;
             }
             //imageView.setImageBitmap(image);
         }
-}
-
+    }
 
     public static Bitmap handleSamplingAndRotationBitmap(Context context, Uri selectedImage)
             throws IOException {
@@ -310,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
         img = rotateBitmap(context, selectedImage, img);
         return img;
     }
-
 
     private static int calculateInSampleSize(BitmapFactory.Options options,
                                              int reqWidth, int reqHeight) {
@@ -375,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
-        if (cursor.getCount() != 1 ) {
+        if (cursor.getCount() != 1) {
             cursor.close();
             return -1;
         }
@@ -397,7 +435,6 @@ public class MainActivity extends AppCompatActivity {
 //        return rotatedImg;
 //    }
 
-
     public Uri getImageUri(Context Context, Bitmap image) {
 
         /**
@@ -417,45 +454,16 @@ public class MainActivity extends AppCompatActivity {
         return Uri.parse(path);
     }
 
-
-    /**
-     * Args:
-     *     contentResolver: a contentResolver
-     *     image: an image in bitmap
-     *
-     * Saves the image to the photos folder
-     */
-    public static void saveImage(ContentResolver contentResolver, Bitmap image){
-
-        MediaStore.Images.Media.insertImage(contentResolver, image, "title", "description");
+    private boolean hasCamera(){
+        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
     }
 
+    public void launchCamera(View view){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //Take a picture and pass results to onActivity Result
+        Log.i(TAG, "pls");
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
-    /**
-     * Args:
-     *      The uri of the file
-     *
-     * Deletes the uri and the file associated with the uri. Most useful for deleting pictures
-     * in the internal storage
-     */
-    public static void deleteUri(Context context, Uri uri){
-
-        long mediaId = ContentUris.parseId(uri);
-        Uri contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        Uri itemUri = ContentUris.withAppendedId(contentUri, mediaId);
-
-        /* int rows =*/ context.getContentResolver().delete(itemUri, null, null);
-
-
-//        String path = itemUri.getEncodedPath();
-//        if(rows == 0)
-//        {
-//            Log.i(TAG,"Could not delete "+path+" :(");
-//        }
-//        else {
-//            Log.i(TAG, "Deleted " + path + " ^_^");
-//        }
     }
-
 
 }
