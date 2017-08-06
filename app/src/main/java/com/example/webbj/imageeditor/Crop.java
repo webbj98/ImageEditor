@@ -2,6 +2,8 @@ package com.example.webbj.imageeditor;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Matrix;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.ActivityNotFoundException;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,7 +32,8 @@ public class Crop extends AppCompatActivity{
     String TAG = "DebugMessage";
     Button crop;
     Intent CropIntent;
-
+    ImageButton rotateClockWise;
+    ImageButton rotateCCW;
 
 
     @Override
@@ -53,6 +57,12 @@ public class Crop extends AppCompatActivity{
         crop =(Button)findViewById(R.id.crop_button);
 
         imageView = (ImageView)findViewById(R.id.picture);
+
+        rotateClockWise = (ImageButton)findViewById(R.id.rotateClockWise);
+        rotateCCW = (ImageButton)findViewById(R.id.rotateCCW);
+
+
+
         //convert the string uri back to a uri object
         Log.i(TAG, data.getString("crop image"));
         picUri = Uri.parse(getIntent().getStringExtra("crop image"));
@@ -64,6 +74,49 @@ public class Crop extends AppCompatActivity{
         imageView.setImageURI(picUri);
 
         //delete the temporary image in the internal storage
+
+        rotateClockWise.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = imageViewtoBitmap(imageView);
+                int width = bitmap.getWidth();
+                Log.i(TAG, Integer.toString(width));
+                int height = bitmap.getHeight();
+                Log.i(TAG, Integer.toString(height));
+                Matrix matrix = new Matrix();
+                matrix.postRotate(90);
+
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, width,
+                        height, true);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                        scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true );
+
+                imageView.setImageBitmap(rotatedBitmap);
+
+            }
+        });
+
+        rotateCCW.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = imageViewtoBitmap(imageView);
+                int width = bitmap.getWidth();
+                Log.i(TAG, Integer.toString(width));
+                int height = bitmap.getHeight();
+                Log.i(TAG, Integer.toString(height));
+                Matrix matrix = new Matrix();
+                matrix.postRotate(-90);
+
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, width,
+                        height, true);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
+                        scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true );
+
+                imageView.setImageBitmap(rotatedBitmap);
+
+            }
+        });
+
 
     }
 
