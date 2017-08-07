@@ -3,6 +3,7 @@ package com.example.webbj.imageeditor;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
@@ -36,12 +37,10 @@ public class Filter extends AppCompatActivity {
 
         Log.i(TAG, "here11");
         mainImageView = (ImageView)findViewById(R.id.picture);
-        mainImageView = (ImageView)findViewById(R.id.picture);
         invertButton = (Button)findViewById(R.id.invertButton);
         applyButton = (Button)findViewById(R.id.applyButton);
         originalButton = (Button)findViewById(R.id.originalButton);
         greyButton = (Button)findViewById(R.id.monoButton);
-        applyButton = (Button)findViewById(R.id.applyButton);
 
         Bundle data = getIntent().getExtras(); // get extra info from another Intent
         if(data == null){
@@ -100,8 +99,6 @@ public class Filter extends AppCompatActivity {
                 Bitmap invertedHiRezImage = invertImage(hiRezCopy);
                 //saveImage(getContentResolver(), invertedHiRezImage);
 
-                Log.i(TAG, "mono done");
-                Log.i(TAG,"help me");
 
             }
         });
@@ -109,13 +106,10 @@ public class Filter extends AppCompatActivity {
         greyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "mono");
+                Log.i(TAG, "grey");
                 Bitmap bitmapCopy = bitmapImage.copy(bitmapImage.getConfig(), true);
                 Log.i(TAG, String.valueOf(bitmapCopy==bitmapImage));
                 mainImageView.setColorFilter(getGreyscaleFilter());
-
-                Log.i(TAG, "mono done");
-                Log.i(TAG,"help me");
 
             }
         });
@@ -124,17 +118,39 @@ public class Filter extends AppCompatActivity {
         originalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, String.valueOf(bitmapImage==imageViewtoBitmap(mainImageView)));
+                Log.i(TAG, "1");
+                Log.i(TAG, String.valueOf(mainImageView.getBaseline()));
                 mainImageView.setImageBitmap(bitmapImage);
+                Log.i(TAG, String.valueOf(2));
+                Log.i(TAG, String.valueOf(mainImageView.getBaseline()));
                 mainImageView.clearColorFilter();
+                Log.i(TAG, String.valueOf(3));
+                Log.i(TAG, String.valueOf(mainImageView.getBaseline()));
             }
         });
 
+        //Apply Button Handler
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "applying");
+                Intent openMainActivity= new Intent(Filter.this, MainActivity.class);
+                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivityIfNeeded(openMainActivity, 0);
+
+            }
+        });
+
+
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return (keyCode == KeyEvent.KEYCODE_BACK || super.onKeyDown(keyCode, event));
+    @Override
+    public void onBackPressed() {
+        Intent openMainActivity= new Intent(Filter.this, MainActivity.class);
+        openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivityIfNeeded(openMainActivity, 0);
     }
+
 
     public static Bitmap invertImage(Bitmap image){
         /*

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -105,8 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 //passes the image to the filter intent
                 Intent i = new Intent(MainActivity.this, Filter.class);
 
-
-                //convert imageview to bitmap
                 imageView.setDrawingCacheEnabled(true);
 
                 // Without it the view will have a dimension of 0,0 and the bitmap will be null
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "nothing");
                 }
 
-                imageView.buildDrawingCache(true);
+//                imageView.buildDrawingCache(true);
                 Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
                 imageView.setDrawingCacheEnabled(false); // clear drawing cache
 
@@ -274,27 +273,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, requestCode, data);
         imageUri = data.getData();
-
         Log.i(TAG, "request code: " + Integer.toString(requestCode));
         if(resultCode == RESULT_OK && requestCode == PICK_IMAGE){
             imageView.setImageURI(imageUri);
             try{
                 //makes sure that the picture is rotated properly
+                Bitmap imageBitmap;
                 Log.i(TAG, "rotated");
                 Bitmap hiRezBitmap = handleSamplingAndRotationBitmap(this, imageUri);
-
-                imageView.setImageBitmap(Bitmap.createScaledBitmap(hiRezBitmap, (int) (hiRezBitmap.getWidth()/2.0),
-                        (int)(hiRezBitmap.getHeight()/1.7), false));
+                imageBitmap = Bitmap.createScaledBitmap(hiRezBitmap, (int) (hiRezBitmap.getWidth()/2.0),
+                        (int)(hiRezBitmap.getHeight()/2.0), false);
+                imageView.setImageBitmap(imageBitmap);
                 //imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
-                Bitmap scaledimage = Filter.imageViewtoBitmap(imageView);
+
 
                 //store the uri of the  higher rez, scaled down version of the bitmap
                 hiRezImageUri = getImageUri(this, hiRezBitmap);
 
                 //Filter.saveImage(this.getContentResolver(), hiRezBitmap);
+//                scaleImageView(imageView, imageBitmap);
+
             }
             catch (Exception e){
             }
+
         }
         else if(resultCode == RESULT_OK && requestCode == REQUEST_IMAGE_CAPTURE){
             Bundle extras = data.getExtras();
@@ -305,13 +307,41 @@ public class MainActivity extends AppCompatActivity {
             try{
                 //makes sure that the picture is rotated properly
                 Log.i(TAG, "rotated");
-                imageView.setImageBitmap(handleSamplingAndRotationBitmap(this, imageUri));
+                Bitmap imageBitmap = handleSamplingAndRotationBitmap(this, imageUri);
+                imageView.setImageBitmap(imageBitmap);
+//                scaleImageView(imageView, imageBitmap);
 
             }
             catch (Exception e){
             }
             //imageView.setImageBitmap(image);
         }
+    }
+
+    private void scaleImageView(ImageView view, Bitmap bitmap){
+
+        // Get current dimensions AND the desired bounding box
+        int width = 0;
+
+        try {
+            width = bitmap.getWidth();
+        } catch (NullPointerException e) {
+        }
+
+        int height = bitmap.getHeight();
+
+        // Now change ImageView's dimensions to match the scaled image
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+        params.width = width;
+        params.height = height;
+        view.setLayoutParams(params);
+
+        Log.i("Test", "done");
+    }
+
+    private int dpToPx(int dp) {
+        float density = getApplicationContext().getResources().getDisplayMetrics().density;
+        return Math.round((float)dp * density);
     }
 
     public static Bitmap handleSamplingAndRotationBitmap(Context context, Uri selectedImage)
