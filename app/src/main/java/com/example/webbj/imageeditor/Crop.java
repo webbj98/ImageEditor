@@ -2,7 +2,11 @@ package com.example.webbj.imageeditor;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -84,12 +88,10 @@ public class Crop extends AppCompatActivity{
                 int height = bitmap.getHeight();
                 Log.i(TAG, Integer.toString(height));
                 Matrix matrix = new Matrix();
-                matrix.postRotate(90);
 
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, width,
-                        height, true);
-                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                        scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true );
+                matrix.postRotate(90);
+                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                        width, height, matrix, true );
 
                 imageView.setImageBitmap(rotatedBitmap);
 
@@ -107,10 +109,8 @@ public class Crop extends AppCompatActivity{
                 Matrix matrix = new Matrix();
                 matrix.postRotate(-90);
 
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, width,
-                        height, true);
-                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                        scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true );
+                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                        bitmap.getWidth(), bitmap.getHeight(), matrix, true );
 
                 imageView.setImageBitmap(rotatedBitmap);
 

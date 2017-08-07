@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             cameraButton.setEnabled(false);
 
 
+
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 //passes the image to the filter intent
+                if (hiRezImageUri != null){ //if no image was selected
                 Intent i = new Intent(MainActivity.this, Filter.class);
 
                 imageView.setDrawingCacheEnabled(true);
@@ -132,9 +134,13 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("hirez image", hiRezImageUri.toString());
                 startActivity(i);
 
-            }
+            }}
+
         });
+
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -204,64 +210,64 @@ public class MainActivity extends AppCompatActivity {
     public void openCropActivity(View v){
         Log.i(TAG, "openCropActivity");
 
-        //creates intent to pass to crop activity
-        Intent i = new Intent(this, Crop.class);
+        if (hiRezImageUri != null){ //if no image was selected
+            //creates intent to pass to crop activity
+            Intent i = new Intent(this, Crop.class);
 
-        //convert imageview to bitmap
-        imageView.setDrawingCacheEnabled(true);
+            //convert imageview to bitmap
+            imageView.setDrawingCacheEnabled(true);
 
-        // Without it the view will have a dimension of 0,0 and the bitmap will be null
-        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            // Without it the view will have a dimension of 0,0 and the bitmap will be null
+            imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
-        // hardcoded so i always know how big image is
-        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+            // hardcoded so i always know how big image is
+            imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
 
-        imageView.buildDrawingCache(true);
-        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
-        imageView.setDrawingCacheEnabled(false); // clear drawing cache
+            imageView.buildDrawingCache(true);
+            Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+            imageView.setDrawingCacheEnabled(false); // clear drawing cache
 
-        Uri imageUri = getImageUri(this, selectedImage);
+            Uri imageUri = getImageUri(this, selectedImage);
 
-        //pass the uri as a string
-        i.putExtra("crop image", imageUri.toString());
-        startActivity(i);
-        Log.i(TAG, "finished opening crop activity");
-
-
-    }
+            //pass the uri as a string
+            i.putExtra("crop image", imageUri.toString());
+            startActivity(i);
+            Log.i(TAG, "finished opening crop activity");
+    }}
 
     public void openRGBActivity(View v){
         //passes the image to the filter intent
-        Intent i = new Intent(this, RGBEditor.class);
+        if (hiRezImageUri != null) { //if no image was selected
+            Intent i = new Intent(this, RGBEditor.class);
 
-        //convert imageview to bitmap
-        imageView.setDrawingCacheEnabled(true);
+            //convert imageview to bitmap
+            imageView.setDrawingCacheEnabled(true);
 
-        // Without it the view will have a dimension of 0,0 and the bitmap will be null
-        imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        // hardcoded so i always know how big image is
-        imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
-        if (imageView == null){
-            Log.i(TAG, "nothing");
+            // Without it the view will have a dimension of 0,0 and the bitmap will be null
+            imageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            // hardcoded so i always know how big image is
+            imageView.layout(0, 0, imageView.getMeasuredWidth(), imageView.getMeasuredHeight());
+            if (imageView == null) {
+                Log.i(TAG, "nothing");
+            }
+
+            imageView.buildDrawingCache(true);
+            Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
+            imageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+            Uri imageUri = getImageUri(this, selectedImage);
+
+
+            Log.i(TAG, imageUri.toString());
+            //        byte[] byte);
+
+
+            //pass the uri as a string
+            i.putExtra("selected image", imageUri.toString());
+            startActivity(i);
         }
-
-        imageView.buildDrawingCache(true);
-        Bitmap selectedImage = Bitmap.createBitmap(imageView.getDrawingCache());
-        imageView.setDrawingCacheEnabled(false); // clear drawing cache
-
-        Uri imageUri = getImageUri(this, selectedImage);
-
-
-        Log.i(TAG, imageUri.toString());
-//        byte[] byte);
-
-
-        //pass the uri as a string
-        i.putExtra("selected image", imageUri.toString());
-        startActivity(i);
-
     }
 
     private void openGallery(){
