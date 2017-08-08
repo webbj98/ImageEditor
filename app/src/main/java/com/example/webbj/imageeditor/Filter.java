@@ -49,9 +49,8 @@ public class Filter extends AppCompatActivity {
         }
 
         //convert the string uris back to a uri object
-        Log.i(TAG, data.getString("selected image"));
         Uri imageUri = Uri.parse(getIntent().getStringExtra("selected image"));
-        Uri hiRezUri = Uri.parse(getIntent().getStringExtra("hirez image"));
+        final Uri hiRezUri = Uri.parse(getIntent().getStringExtra("hirez image"));
         Log.i(TAG, imageUri.toString());
         //sets imageView to display uri
         mainImageView.setImageURI(imageUri);
@@ -135,8 +134,34 @@ public class Filter extends AppCompatActivity {
             public void onClick(View v) {
                 Log.i(TAG, "applying");
                 Intent openMainActivity= new Intent(Filter.this, MainActivity.class);
-                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivityIfNeeded(openMainActivity, 0);
+
+                mainImageView.setDrawingCacheEnabled(true);
+
+                // Without it the view will have a dimension of 0,0 and the bitmap will be null
+                mainImageView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                // hardcoded so i always know how big image is
+                mainImageView.layout(0, 0, mainImageView.getMeasuredWidth(), mainImageView.getMeasuredHeight());
+                if (mainImageView == null){
+                    Log.i(TAG, "nothing");
+                }
+
+//                imageView.buildDrawingCache(true);
+                Bitmap selectedImage = Bitmap.createBitmap(mainImageView.getDrawingCache());
+                mainImageView.setDrawingCacheEnabled(false); // clear drawing cache
+
+                Uri imageUri = MainActivity.getImageUri(Filter.this, selectedImage);
+
+                Log.i(TAG, imageUri.toString());
+                //        byte[] byte);
+
+
+                //pass the uri as a string
+                openMainActivity.putExtra("selected image", imageUri.toString());
+                openMainActivity.putExtra("hi rez selected image", hiRezUri.toString());
+                startActivity(openMainActivity);
 
             }
         });

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "oncreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -63,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "poo");
 
             //asks whether to display the reason for the request
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -92,11 +93,17 @@ public class MainActivity extends AppCompatActivity {
         if(!hasCamera())
             cameraButton.setEnabled(false);
 
-
+        Bundle data = getIntent().getExtras(); // get extra info from another Intent
+        if(data != null){
+            imageUri = Uri.parse(getIntent().getStringExtra("selected image"));
+            imageView.setImageURI(imageUri);
+            hiRezImageUri = Uri.parse(getIntent().getStringExtra("hi rez selected image"));
+        }
 
         getImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG,"starting onclick listeneres");
                 openGallery();
             }
         });
@@ -134,13 +141,16 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("hirez image", hiRezImageUri.toString());
                 startActivity(i);
 
-            }}
+            }
+            else{
+                    Log.i(TAG, "hi rez is null");
+            }
+            }
 
         });
 
 
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -471,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
 //        return rotatedImg;
 //    }
 
-    public Uri getImageUri(Context Context, Bitmap image) {
+    public static Uri getImageUri(Context Context, Bitmap image) {
 
         /**
          *
